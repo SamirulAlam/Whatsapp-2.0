@@ -1,10 +1,11 @@
 import { Button } from "@material-ui/core";
 import Head from "next/head";
 import styled from "styled-components";
+import { auth, provider } from "../firebase";
 
 function Login() {
     const signIn=()=>{
-
+        auth.signInWithPopup(provider).catch(alert)
     }
     return (
         <Container>
@@ -12,7 +13,7 @@ function Login() {
                 <title>Login</title>
             </Head>
             <LoginContainer>
-                <Logo src="https://logos-world.net/wp-content/uploads/2020/05/WhatsApp-Logo.png" />
+                <Logo src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/479px-WhatsApp.svg.png" />
                 <Button onClick={signIn}>Sign in with Google</Button>
             </LoginContainer>
         </Container>
