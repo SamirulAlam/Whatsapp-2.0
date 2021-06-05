@@ -10,10 +10,12 @@ import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import MicIcon from '@material-ui/icons/Mic';
 import { useCollection } from "react-firebase-hooks/firestore"
 import firebase from "firebase"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import getRecipientEmail from "../utils/getRecipientEmail"
+import TimeAgo from "timeago-react"
 
 function ChatScreen({chat, message}) {
+    const endOfMessagesRef=useRef(null)
     const [input,setInput]=useState("");
     const [user]=useAuthState(auth)
     const router=useRouter()
@@ -55,6 +57,14 @@ function ChatScreen({chat, message}) {
             photoURL:user.photoURL
         })
         setInput("")
+        scrollToBottom()
+    }
+
+    const scrollToBottom=()=>{
+        endOfMessagesRef.current.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        })
     }
     const recipient=recipientSnapshot?.docs?.[0]?.data();
     const recipientEmail=getRecipientEmail(chat.users,user)
@@ -71,7 +81,11 @@ function ChatScreen({chat, message}) {
                 
                 <HeaderInformation>
                     <h3>{recipientEmail}</h3>
-                    <p>ssdsds</p>
+                    <p>Last active:{" "}{recipient?.lastSeen?.toDate()?(
+                        <TimeAgo datetime={recipient?.lastSeen.toDate()} />
+                    ):(
+                        "Unavailable"   
+                    )}</p>
                 </HeaderInformation>
                 <HeaderIcons>
                     <IconButton>
@@ -84,7 +98,7 @@ function ChatScreen({chat, message}) {
             </Header>
             <MessageContainer>
                 {showMessages()}
-                <EndOfMessage />
+                <EndOfMessage  ref={endOfMessagesRef}/>
             </MessageContainer>
             <InputContainer>
                 <InsertEmoticonIcon />
@@ -131,7 +145,7 @@ const HeaderIcons =styled.div``
 const MessageContainer =styled.div`
     padding:30px;
     background-color:#e5ded8;
-    min-height:90vh;
+    min-height:76vh;
 `
 
 const EndOfMessage =styled.div``
